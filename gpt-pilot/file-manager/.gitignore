@@ -1,0 +1,14 @@
+##
+# Obvious stuff we don't need:
+##
+venv/
+.venv/
+.coverage
+.pytest_cache
+
+##
+# Project Specific:
+##
+
+# we don't need the DB
+file_manager.db
