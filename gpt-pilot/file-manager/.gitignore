@@ -4,7 +4,9 @@
 venv/
 .venv/
 .coverage
-.pytest_cache
+.pytest_cache/
+
+.idea/
 
 ##
 # Project Specific:
