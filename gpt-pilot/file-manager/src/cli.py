@@ -8,7 +8,7 @@ import os
 # Add the parent directory of 'src' to the Python path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.db import initialize_db, store_md5sum_in_db  # Import the initialize_db and store_md5sum_in_db functions
+from src.db import initialize_db, store_md5sum_in_db, is_duplicate  # Import the initialize_db, store_md5sum_in_db, and is_duplicate functions
 from src.md5sum import compute_md5sum  # Import the compute_md5sum function
 
 # Configure logging
@@ -41,7 +41,11 @@ def scan_file(args):
 def check_duplicate(args):
     try:
         logging.info(f"Checking if file {args.path} is a duplicate")
-        print(f"Placeholder: Checking if file {args.path} is a duplicate")
+        md5sum = compute_md5sum(args.path)
+        if is_duplicate(md5sum):
+            print(f"The file '{args.path}' is a duplicate.")
+        else:
+            print(f"The file '{args.path}' is not a duplicate.")
     except Exception as e:
         logging.error(f"Error checking duplicate for file {args.path}: {e}", exc_info=True)
 

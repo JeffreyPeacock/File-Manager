@@ -1,5 +1,6 @@
 import sqlite3
 import logging
+from .md5sum import compute_md5sum
 
 DB_PATH = 'file_manager.db'
 
@@ -36,5 +37,32 @@ def store_md5sum_in_db(file_path, md5sum):
         logging.error(f"Error storing md5sum in database for {file_path}: {e}", exc_info=True)
         raise
 
-if __name__ == "__main__":
-    initialize_db()
+def get_files_by_md5sum(md5sum):
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT path FROM files WHERE md5sum = ?
+        ''', (md5sum,))
+        files = cursor.fetchall()
+        conn.close()
+        logging.info(f"Queried database for md5sum {md5sum}. Found {len(files)} file(s).")
+        return [file[0] for file in files]
+    except Exception as e:
+        logging.error(f"Error querying database for md5sum {md5sum}: {e}", exc_info=True)
+        raise
+
+def is_duplicate(md5sum):
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT COUNT(*) FROM files WHERE md5sum = ?
+        ''', (md5sum,))
+        count = cursor.fetchone()[0]
+        conn.close()
+        logging.info(f"Checked duplicate status for md5sum {md5sum}. Duplicate: {count > 0}")
+        return count > 0
+    except Exception as e:
+        logging.error(f"Error checking duplicate status for md5sum {md5sum}: {e}", exc_info=True)
+        raise
