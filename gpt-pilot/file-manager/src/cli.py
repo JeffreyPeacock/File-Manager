@@ -2,21 +2,39 @@
 
 import argparse
 import logging
+import sys
+import os
+
+# Add the parent directory of 'src' to the Python path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from src.db import initialize_db, store_md5sum_in_db  # Import the initialize_db and store_md5sum_in_db functions
+from src.md5sum import compute_md5sum  # Import the compute_md5sum function
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
+# Initialize the database when the CLI is used
+initialize_db()
+
 def scan_directory(args):
     try:
         logging.info(f"Scanning directory {args.path}")
-        print(f"Placeholder: Scanning directory {args.path}")
+        for root, dirs, files in os.walk(args.path):
+            for file in files:
+                file_path = os.path.join(root, file)
+                md5sum = compute_md5sum(file_path)
+                store_md5sum_in_db(file_path, md5sum)
+                logging.info(f"Stored MD5 checksum for file {file_path}")
     except Exception as e:
         logging.error(f"Error scanning directory {args.path}: {e}", exc_info=True)
 
 def scan_file(args):
     try:
         logging.info(f"Scanning file {args.path}")
-        print(f"Placeholder: Scanning file {args.path}")
+        md5sum = compute_md5sum(args.path)
+        store_md5sum_in_db(args.path, md5sum)
+        print(f"MD5 checksum for file {args.path}: {md5sum}")
     except Exception as e:
         logging.error(f"Error scanning file {args.path}: {e}", exc_info=True)
 
@@ -39,7 +57,7 @@ def display_duplicates_gui(args):
         logging.info("Displaying duplicates in GUI")
         print("Placeholder: Displaying duplicates in GUI")
     except Exception as e:
-        logging.error("Error displaying duplicates in GUI: {e}", exc_info=True)
+        logging.error(f"Error displaying duplicates in GUI: {e}", exc_info=True)
 
 def main():
     parser = argparse.ArgumentParser(description="File Manager CLI")
