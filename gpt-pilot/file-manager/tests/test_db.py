@@ -22,8 +22,15 @@ class TestDatabaseInitialization(unittest.TestCase):
         cursor = conn.cursor()
         cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='files'")
         table = cursor.fetchone()
-        conn.close()
         self.assertIsNotNone(table)
+
+        # Check if the columns 'path' and 'md5sum' exist in the 'files' table
+        cursor.execute("PRAGMA table_info(files)")
+        columns = cursor.fetchall()
+        column_names = [column[1] for column in columns]
+        self.assertIn('path', column_names)
+        self.assertIn('md5sum', column_names)
+        conn.close()
 
 if __name__ == '__main__':
     unittest.main()
