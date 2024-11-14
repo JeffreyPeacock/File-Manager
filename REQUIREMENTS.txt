@@ -1,9 +1,8 @@
-I want to create a specialize file-manager application.  It's core usage is to recursively search a files-system or directory and compute the md5sum for each file it finds.  It then saves the file path and the
-md5sum to a database.  The app should also be able to search the database for a file path and return the md5sum.
+I want to create a specialize file-manager application.  It's primary usage is to recursively search a files-system or directory and compute the md5sum for each file it finds, and persist that information to a local database. This information is used to find, track and manage duplicate files across differrent files-systems.
 
 General Implmention Requirements:
 1. This app will run locally on the local system.
-2. This app will be implementated in Python.
+2. This app will be implementated in Python 3.12.x.
 3. This app will use SQLite as its persistemce store.
 4. This app will provide a full featured graphical user-interface that is similar to the Gnome file-manager or Windows Explorer.
 5. This app will have a CLI that will accept a finite set of directives that specify specific actions to be completed independent of any graphical user interface.
