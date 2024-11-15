@@ -1,5 +1,5 @@
 I want to create a specialize file-manager application.  It's primary usage is
-to recursively search a files-system or directory and compute the md5sum for
+to recursively search a directory and compute the md5sum for
 each file it finds, and persist that information to a local database. This
 information is used to find, track and manage duplicate files across differrent
 files-systems.

@@ -8,7 +8,7 @@ import os
 # Add the parent directory of 'src' to the Python path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.db import initialize_db, store_md5sum_in_db, is_duplicate  # Import the initialize_db, store_md5sum_in_db, and is_duplicate functions
+from src.db import initialize_db, store_md5sum_in_db, is_duplicate, get_files_by_md5sum  # Import the initialize_db, store_md5sum_in_db, is_duplicate, and get_files_by_md5sum functions
 from src.md5sum import compute_md5sum  # Import the compute_md5sum function
 
 # Configure logging
@@ -52,7 +52,24 @@ def check_duplicate(args):
 def report_duplicates(args):
     try:
         logging.info(f"Reporting duplicates in directory {args.path}")
-        print(f"Placeholder: Reporting duplicates in directory {args.path}")
+        duplicates = {}
+        for root, dirs, files in os.walk(args.path):
+            for file in files:
+                file_path = os.path.join(root, file)
+                md5sum = compute_md5sum(file_path)
+                if is_duplicate(md5sum):
+                    if md5sum not in duplicates:
+                        duplicates[md5sum] = []
+                    duplicates[md5sum].append(file_path)
+
+        if duplicates:
+            for md5sum, paths in duplicates.items():
+                print(f"Duplicate files for MD5 {md5sum}:")
+                for path in paths:
+                    print(f" - {path}")
+        else:
+            print("No duplicates found.")
+        logging.info("Exiting report_duplicates function")
     except Exception as e:
         logging.error(f"Error reporting duplicates in directory {args.path}: {e}", exc_info=True)
 

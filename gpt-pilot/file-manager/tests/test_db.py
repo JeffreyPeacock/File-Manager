@@ -1,7 +1,7 @@
 import unittest
 import os
 import sqlite3
-from src.db import initialize_db, store_md5sum_in_db, is_duplicate
+from src.db import initialize_db, store_md5sum_in_db, is_duplicate, get_files_by_md5sum, DB_PATH  # Add get_files_by_md5sum here
 from src.md5sum import compute_md5sum
 
 class TestDatabaseInitialization(unittest.TestCase):
@@ -100,7 +100,7 @@ class TestGetFilesByMd5sum(unittest.TestCase):
 class TestDuplicateCheck(unittest.TestCase):
     def setUp(self):
         # Ensure a clean state by removing the database file if it exists
-        self.db_path = 'file_manager.db'
+        self.db_path = DB_PATH  # Use DB_PATH here
         if os.path.exists(self.db_path):
             os.remove(self.db_path)
         initialize_db()
@@ -123,12 +123,13 @@ class TestDuplicateCheck(unittest.TestCase):
 
     def test_is_duplicate(self):
         # Test that the file is identified as a duplicate
-        self.assertTrue(is_duplicate(self.test_file_path))
+        self.assertTrue(is_duplicate(self.md5sum))  # Use self.md5sum here
 
         # Modify the file and test that it is not identified as a duplicate
         with open(self.test_file_path, 'w') as f:
             f.write('This is a modified test file.')
-        self.assertFalse(is_duplicate(self.test_file_path))
+        new_md5sum = compute_md5sum(self.test_file_path)
+        self.assertFalse(is_duplicate(new_md5sum))  # Use new_md5sum here
 
 if __name__ == "__main__":
     unittest.main()

@@ -6,6 +6,7 @@ DB_PATH = 'file_manager.db'
 
 def initialize_db():
     try:
+        logging.info("Initializing database")
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
         cursor.execute('''
@@ -24,6 +25,7 @@ def initialize_db():
 
 def store_md5sum_in_db(file_path, md5sum):
     try:
+        logging.info(f"Storing md5sum for file {file_path}")
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
         cursor.execute('''
@@ -39,6 +41,7 @@ def store_md5sum_in_db(file_path, md5sum):
 
 def get_files_by_md5sum(md5sum):
     try:
+        logging.info(f"Querying database for md5sum {md5sum}")
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
         cursor.execute('''
@@ -54,6 +57,7 @@ def get_files_by_md5sum(md5sum):
 
 def is_duplicate(md5sum):
     try:
+        logging.info(f"Checking duplicate status for md5sum {md5sum}")
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
         cursor.execute('''
